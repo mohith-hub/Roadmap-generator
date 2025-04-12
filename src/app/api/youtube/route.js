@@ -3,21 +3,28 @@ export async function GET(req) {
   const topic = searchParams.get("topic");
 
   if (!topic) {
-    return Response.json({ error: "Topic query parameter is required" }, { status: 400 });
+    return new Response(JSON.stringify({ error: "Topic query parameter is required" }), { status: 400 });
   }
 
   const API_KEY = process.env.YOUTUBE_API_KEY;
-  const response = await fetch(
-    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${topic}+tutorial&type=video&maxResults=5&videoEmbeddable=true&key=${API_KEY}`
-  );
-  const data = await response.json();
+  if (!API_KEY) {
+    return new Response(JSON.stringify({ error: "YouTube API key is missing" }), { status: 500 });
+  }
 
-  // Extract only necessary details and remove autoplay-related data
-  const videos = data.items.map(video => ({
-    id: video.id.videoId,
-    title: video.snippet.title,
-    url: `https://www.youtube.com/watch?v=${video.id.videoId}`, // Standard YouTube URL
-  }));
-
-  return Response.json(videos);
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(topic)}+tutorial&type=video&maxResults=5&videoEmbeddable=true&key=${API_KEY}`
+    );
+    if (!response.ok) throw new Error(`YouTube API error: ${response.statusText}`);
+    const data = await response.json();
+    const videos = data.items.map(video => ({
+      id: video.id.videoId,
+      title: video.snippet.title,
+      url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
+    }));
+    return new Response(JSON.stringify(videos), { status: 200 });
+  } catch (error) {
+    console.error("YouTube API Error:", error.message);
+    return new Response(JSON.stringify([]), { status: 500 });
+  }
 }
