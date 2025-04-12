@@ -22,7 +22,7 @@ export default function Dashboard() {
               <span className="text-sm md:text-base">Home</span>
             </button>
             <button
-              onClick={() => router.push("/roadmaps")}
+              onClick={() => router.push("/roadmaps/create")}
               className="flex items-center space-x-2 text-[#161179] hover:text-[#726bff] w-full text-left py-2"
             >
               <Map className="w-5 h-5 text-[#161179]" />
