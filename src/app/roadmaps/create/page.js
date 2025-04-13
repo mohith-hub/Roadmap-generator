@@ -1,10 +1,10 @@
-export const dynamic = "force-dynamic"; // Force dynamic rendering to bypass prerendering issues
-
 "use client";
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import TreeRoadmap from "./TreeRoadmap";
 import roadmapData from "./roadmapData";
+
+export const dynamic = "force-dynamic"; // Force dynamic rendering to bypass prerendering issues
 
 export default function CreateRoadmap() {
   const router = useRouter();
