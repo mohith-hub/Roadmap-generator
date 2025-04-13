@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import TreeRoadmap from "./TreeRoadmap"; // Corrected relative import
 import roadmapData from "./roadmapData"; // Corrected relative import
@@ -84,118 +84,120 @@ export default function CreateRoadmap() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#0C0950] p-4">
-      <h1 className="text-2xl md:text-3xl font-bold text-[#FBE4D6] mb-4 md:mb-6">Create Your Roadmap</h1>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0C0950] p-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-[#FBE4D6] mb-4 md:mb-6">Create Your Roadmap</h1>
 
-      <select
-        value={selectedDomain}
-        onChange={(e) => setSelectedDomain(e.target.value)}
-        className="px-4 py-3 md:px-4 md:py-2 border border-[#FBE4D6] rounded-md shadow-sm focus:ring focus:ring-[#FBE4D6] mb-4 md:mb-6 text-[#FBE4D6] bg-[#161179] text-base md:text-lg w-full max-w-xs"
-      >
-        <option value="" disabled hidden>
-          Select a Domain
-        </option>
-        {Object.keys(roadmapData).map((domain) => (
-          <option key={domain} value={domain} className="text-[#FBE4D6] bg-[#161179]">
-            {domain}
+        <select
+          value={selectedDomain}
+          onChange={(e) => setSelectedDomain(e.target.value)}
+          className="px-4 py-3 md:px-4 md:py-2 border border-[#FBE4D6] rounded-md shadow-sm focus:ring focus:ring-[#FBE4D6] mb-4 md:mb-6 text-[#FBE4D6] bg-[#161179] text-base md:text-lg w-full max-w-xs"
+        >
+          <option value="" disabled hidden>
+            Select a Domain
           </option>
-        ))}
-      </select>
+          {Object.keys(roadmapData).map((domain) => (
+            <option key={domain} value={domain} className="text-[#FBE4D6] bg-[#161179]">
+              {domain}
+            </option>
+          ))}
+        </select>
 
-      <button
-        onClick={handleGenerateRoadmap}
-        className="px-6 py-3 md:px-6 md:py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition mb-4 md:mb-6 text-base md:text-lg"
-      >
-        Generate Roadmap
-      </button>
-
-      <div className="flex space-x-4 mb-4">
         <button
-          onClick={handleViewSavedRoadmaps}
-          className="px-6 py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition text-base md:text-lg"
+          onClick={handleGenerateRoadmap}
+          className="px-6 py-3 md:px-6 md:py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition mb-4 md:mb-6 text-base md:text-lg"
         >
-          View Saved Roadmaps
+          Generate Roadmap
         </button>
-        <button
-          onClick={handleBackToDashboard}
-          className="px-6 py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition text-base md:text-lg"
-        >
-          Back to Dashboard
-        </button>
-      </div>
 
-      {error && <p className="text-[#FBE4D6] font-semibold text-base mb-4">{error}</p>}
-
-      {roadmap && roadmap.length > 0 && (
-        <div className="bg-[#ffff00] p-4 md:p-6 rounded-lg shadow-md w-full max-w-3xl border border-[#FBE4D6] text-[#FBE4D6] mb-6">
-          <h2 className="text-xl md:text-2xl font-bold text-[#161179] mb-3 md:mb-4">{selectedDomain} Roadmap</h2>
-          <TreeRoadmap
-            roadmap={roadmap}
-            selectedDomain={selectedDomain}
-            userData={userData}
-            onUserDataChange={(newData) => setUserData(newData)}
-          />
-          {(userData.links.length > 0 || userData.files.length > 0) && (
-            <button
-              onClick={handleSaveRoadmap}
-              className="mt-4 px-6 py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition text-base md:text-lg"
-            >
-              Save Roadmap
-            </button>
-          )}
+        <div className="flex space-x-4 mb-4">
+          <button
+            onClick={handleViewSavedRoadmaps}
+            className="px-6 py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition text-base md:text-lg"
+          >
+            View Saved Roadmaps
+          </button>
+          <button
+            onClick={handleBackToDashboard}
+            className="px-6 py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition text-base md:text-lg"
+          >
+            Back to Dashboard
+          </button>
         </div>
-      )}
 
-      {showSavedRoadmaps && (
-        <div className="bg-[#FBE4D6] p-4 md:p-6 rounded-lg shadow-md w-full max-w-3xl border border-[#FBE4D6] text-[#FBE4D6]">
-          <h2 className="text-xl md:text-2xl font-bold text-[#161179] mb-3 md:mb-4">Saved Roadmaps</h2>
-          {savedRoadmaps.length > 0 ? (
-            <ul className="space-y-4">
-              {savedRoadmaps.map((domain) => (
-                <li key={domain} className="p-2 bg-[#161179] rounded-md">
-                  <button
-                    onClick={() => handleLoadSavedRoadmap(domain)}
-                    className="text-[#FBE4D6] hover:text-[#ffff00] text-sm md:text-base"
-                  >
-                    {domain}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-[#FBE4D6] font-semibold text-base">No saved roadmaps yet.</p>
-          )}
-        </div>
-      )}
+        {error && <p className="text-[#FBE4D6] font-semibold text-base mb-4">{error}</p>}
 
-      {showSaveModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#ffff00] p-6 rounded-lg shadow-lg w-full max-w-md text-[#161179]">
-            <h2 className="text-xl font-bold mb-4">Name Your Roadmap</h2>
-            <input
-              type="text"
-              value={saveRoadmapName}
-              onChange={(e) => setSaveRoadmapName(e.target.value)}
-              className="w-full px-3 py-2 mb-4 border border-[#161179] rounded-md focus:outline-none focus:ring-2 focus:ring-[#161179]"
-              placeholder="Enter a name..."
+        {roadmap && roadmap.length > 0 && (
+          <div className="bg-[#ffff00] p-4 md:p-6 rounded-lg shadow-md w-full max-w-3xl border border-[#FBE4D6] text-[#FBE4D6] mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-[#161179] mb-3 md:mb-4">{selectedDomain} Roadmap</h2>
+            <TreeRoadmap
+              roadmap={roadmap}
+              selectedDomain={selectedDomain}
+              userData={userData}
+              onUserDataChange={(newData) => setUserData(newData)}
             />
-            <div className="flex justify-end space-x-4">
+            {(userData.links.length > 0 || userData.files.length > 0) && (
               <button
-                onClick={() => setShowSaveModal(false)}
-                className="px-4 py-2 bg-[#161179] text-[#FBE4D6] rounded-md hover:bg-[#ffff00] hover:text-[#161179] transition"
+                onClick={handleSaveRoadmap}
+                className="mt-4 px-6 py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition text-base md:text-lg"
               >
-                Cancel
+                Save Roadmap
               </button>
-              <button
-                onClick={handleConfirmSave}
-                className="px-4 py-2 bg-[#161179] text-[#FBE4D6] rounded-md hover:bg-[#ffff00] hover:text-[#161179] transition"
-              >
-                Save
-              </button>
+            )}
+          </div>
+        )}
+
+        {showSavedRoadmaps && (
+          <div className="bg-[#FBE4D6] p-4 md:p-6 rounded-lg shadow-md w-full max-w-3xl border border-[#FBE4D6] text-[#FBE4D6]">
+            <h2 className="text-xl md:text-2xl font-bold text-[#161179] mb-3 md:mb-4">Saved Roadmaps</h2>
+            {savedRoadmaps.length > 0 ? (
+              <ul className="space-y-4">
+                {savedRoadmaps.map((domain) => (
+                  <li key={domain} className="p-2 bg-[#161179] rounded-md">
+                    <button
+                      onClick={() => handleLoadSavedRoadmap(domain)}
+                      className="text-[#FBE4D6] hover:text-[#ffff00] text-sm md:text-base"
+                    >
+                      {domain}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[#FBE4D6] font-semibold text-base">No saved roadmaps yet.</p>
+            )}
+          </div>
+        )}
+
+        {showSaveModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-[#ffff00] p-6 rounded-lg shadow-lg w-full max-w-md text-[#161179]">
+              <h2 className="text-xl font-bold mb-4">Name Your Roadmap</h2>
+              <input
+                type="text"
+                value={saveRoadmapName}
+                onChange={(e) => setSaveRoadmapName(e.target.value)}
+                className="w-full px-3 py-2 mb-4 border border-[#161179] rounded-md focus:outline-none focus:ring-2 focus:ring-[#161179]"
+                placeholder="Enter a name..."
+              />
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => setShowSaveModal(false)}
+                  className="px-4 py-2 bg-[#161179] text-[#FBE4D6] rounded-md hover:bg-[#ffff00] hover:text-[#161179] transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmSave}
+                  className="px-4 py-2 bg-[#161179] text-[#FBE4D6] rounded-md hover:bg-[#ffff00] hover:text-[#161179] transition"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </Suspense>
   );
 }
