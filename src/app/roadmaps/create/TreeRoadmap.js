@@ -8,14 +8,48 @@ import ReactFlow, {
   Position,
   Handle,
   BezierEdge,
-  getBezierPath,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import dagre from "dagre";
 import { useRouter } from "next/navigation";
 
-// ... (keep all existing constants and components like CustomBezierEdge, getLayoutedElements, etc.)
+// Define getLayoutedElements function
+const getLayoutedElements = (nodes, edges) => {
+  const dagreGraph = new dagre.graphlib.Graph();
+  dagreGraph.setDefaultEdgeLabel(() => ({}));
 
+  dagreGraph.setGraph({ rankdir: "TB", nodesep: 50, edgesep: 50, ranksep: 100 }); // Top-Bottom layout
+
+  // Add nodes to dagre graph
+  nodes.forEach((node) => {
+    dagreGraph.setNode(node.id, { width: 220, height: 80 }); // Adjust size based on your node styling
+  });
+
+  // Add edges to dagre graph
+  edges.forEach((edge) => {
+    dagreGraph.setEdge(edge.source, edge.target);
+  });
+
+  // Calculate layout
+  dagre.layout(dagreGraph);
+
+  // Update node positions
+  nodes.forEach((node) => {
+    const nodeWithPosition = dagreGraph.node(node.id);
+    node.targetPosition = Position.Top;
+    node.sourcePosition = Position.Bottom;
+    // Shift dagre node position (anchor=center) to top left to match React Flow anchor (top left)
+    node.position = {
+      x: nodeWithPosition.x - 110, // Half of width
+      y: nodeWithPosition.y - 40,  // Half of height
+    };
+    return node;
+  });
+
+  return { nodes, edges };
+};
+
+// TreeRoadmapComponent definition
 const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataChange }) => {
   const reactFlowWrapper = useRef(null);
   const { setViewport, fitView, getNodes } = useReactFlow();
@@ -129,7 +163,7 @@ const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataCha
           },
           type: "childNode",
           position: {
-            x: stackDirection === "right" ? parentX + childBoxOffset : parentX - childBoxOffset,
+            x: stackDirection === "right" ? parentX + 250 : parentX - 250,
             y: parentY,
           },
         });
@@ -303,9 +337,6 @@ const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataCha
               borderRadius: "4px",
               background: "#FBE4D6",
               color: "#261FB3",
-              "::placeholder": {
-                color: "#161179",
-              },
             }}
           />
           <button
@@ -475,13 +506,13 @@ const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataCha
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          edgeTypes={{ default: CustomBezierEdge }}
+          edgeTypes={{ default: BezierEdge }}
           nodeTypes={{ customNode: CustomNode, childNode: ChildNode }}
           panOnScroll={true}
           panOnDrag={true}
           minZoom={0.4}
           maxZoom={1.5}
-          defaultViewport={{ zoom: defaultZoomLevel, x: 0, y: 50 }}
+          defaultViewport={{ zoom: 0.8, x: 0, y: 50 }}
           style={{ background: "#0C0950" }}
         >
           <Controls position="top-right" />
