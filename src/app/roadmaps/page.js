@@ -23,7 +23,7 @@ export const dynamic = "force-dynamic"; // Force dynamic rendering to bypass pre
 export default function Roadmap() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // Client-side hook requiring <Suspense>
   const domainParam = searchParams.get("domain")?.replace(/-/g, " ");
 
   // Normalize domainParam to match the case of domains keys
@@ -58,6 +58,7 @@ export default function Roadmap() {
     setFilteredRepos(domains[selectedDomain].gitHubLinks.filter((repo) => repo.name.toLowerCase().includes(query)));
   };
 
+  // Render the suspense boundary around the content that depends on searchParams
   return (
     <Suspense fallback={<div className="flex items-center justify-center h-screen bg-[#0C0950] text-[#FBE4D6]">Loading...</div>}>
       <div className="flex flex-row h-screen bg-[#0C0950]">
