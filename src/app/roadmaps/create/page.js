@@ -79,7 +79,7 @@ export default function CreateRoadmap() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0C0950] p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#FBE4D6] p-4">
         <h1 className="text-2xl md:text-3xl font-bold text-[#FBE4D6] mb-4 md:mb-6">Create Your Roadmap</h1>
         <select
           value={selectedDomain}
