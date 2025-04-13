@@ -49,7 +49,7 @@ export default function Dashboard() {
               }`}
               onClick={() => {
                 setSelectedRoadmap(roadmap);
-                router.push(`/roadmap/${roadmap.toLowerCase().replace(/\s+/g, "-")}`);
+                router.push(`/roadmaps?domain=${roadmap.toLowerCase().replace(/\s+/g, "-")}`);
               }}
             >
               <h2 className="text-lg md:text-xl font-semibold text-[#FBE4D6]">{roadmap}</h2>

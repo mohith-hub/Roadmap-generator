@@ -12,6 +12,8 @@ export default function CreateRoadmap() {
   const [userData, setUserData] = useState({ links: [], files: [] });
   const [showSavedRoadmaps, setShowSavedRoadmaps] = useState(false);
   const [savedRoadmaps, setSavedRoadmaps] = useState([]);
+  const [showSaveModal, setShowSaveModal] = useState(false); // State for modal visibility
+  const [saveRoadmapName, setSaveRoadmapName] = useState(""); // State for custom name input
 
   // Load saved roadmaps from localStorage on mount
   useEffect(() => {
@@ -35,20 +37,30 @@ export default function CreateRoadmap() {
 
   const handleSaveRoadmap = () => {
     if (selectedDomain && (userData.links.length > 0 || userData.files.length > 0)) {
+      setShowSaveModal(true); // Show the modal to name the roadmap
+    }
+  };
+
+  const handleConfirmSave = () => {
+    if (saveRoadmapName.trim() && (userData.links.length > 0 || userData.files.length > 0)) {
       const roadmapToSave = {
-        originalRoadmap: roadmap || [], // Ensure originalRoadmap is saved
+        originalRoadmap: roadmap || [],
         userLinks: userData.links,
         userFiles: userData.files,
       };
-      localStorage.setItem(`roadmapData_${selectedDomain}`, JSON.stringify(roadmapToSave));
+      localStorage.setItem(`roadmapData_${saveRoadmapName}`, JSON.stringify(roadmapToSave));
       alert("Roadmap saved successfully!");
       
       // Update the list of saved roadmaps and show the saved section
-      setSavedRoadmaps((prev) => [...new Set([...prev, selectedDomain])]);
+      setSavedRoadmaps((prev) => [...new Set([...prev, saveRoadmapName])]);
       setShowSavedRoadmaps(true);
-      setSelectedDomain(""); // Reset selected domain
-      setRoadmap(null); // Reset roadmap
-      setUserData({ links: [], files: [] }); // Reset user data
+      setSelectedDomain("");
+      setRoadmap(null);
+      setUserData({ links: [], files: [] });
+      setSaveRoadmapName(""); // Reset the input field
+      setShowSaveModal(false); // Hide the modal
+    } else {
+      setError("Please enter a name for the roadmap!");
     }
   };
 
@@ -61,6 +73,14 @@ export default function CreateRoadmap() {
       setSelectedDomain(domain);
       setShowSavedRoadmaps(false); // Hide saved section after loading
     }
+  };
+
+  const handleViewSavedRoadmaps = () => {
+    setShowSavedRoadmaps(true); // Show the saved roadmaps section
+  };
+
+  const handleBackToDashboard = () => {
+    router.push("/"); // Navigate back to the dashboard (homepage)
   };
 
   return (
@@ -88,6 +108,21 @@ export default function CreateRoadmap() {
       >
         Generate Roadmap
       </button>
+
+      <div className="flex space-x-4 mb-4">
+        <button
+          onClick={handleViewSavedRoadmaps}
+          className="px-6 py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition text-base md:text-lg"
+        >
+          View Saved Roadmaps
+        </button>
+        <button
+          onClick={handleBackToDashboard}
+          className="px-6 py-3 bg-[#161179] text-[#FBE4D6] font-semibold rounded-lg shadow-md hover:bg-[#ffff00] hover:text-[#161179] transition text-base md:text-lg"
+        >
+          Back to Dashboard
+        </button>
+      </div>
 
       {error && <p className="text-[#FBE4D6] font-semibold text-base mb-4">{error}</p>}
 
@@ -130,6 +165,35 @@ export default function CreateRoadmap() {
           ) : (
             <p className="text-[#FBE4D6] font-semibold text-base">No saved roadmaps yet.</p>
           )}
+        </div>
+      )}
+
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[#ffff00] p-6 rounded-lg shadow-lg w-full max-w-md text-[#161179]">
+            <h2 className="text-xl font-bold mb-4">Name Your Roadmap</h2>
+            <input
+              type="text"
+              value={saveRoadmapName}
+              onChange={(e) => setSaveRoadmapName(e.target.value)}
+              className="w-full px-3 py-2 mb-4 border border-[#161179] rounded-md focus:outline-none focus:ring-2 focus:ring-[#161179]"
+              placeholder="Enter a name..."
+            />
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="px-4 py-2 bg-[#161179] text-[#FBE4D6] rounded-md hover:bg-[#ffff00] hover:text-[#161179] transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmSave}
+                className="px-4 py-2 bg-[#161179] text-[#FBE4D6] rounded-md hover:bg-[#ffff00] hover:text-[#161179] transition"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
