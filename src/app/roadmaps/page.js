@@ -20,7 +20,15 @@ const domains = {
 
 export const dynamic = "force-dynamic"; // Force dynamic rendering to bypass prerendering
 
-export default function Roadmap() {
+export default function RoadmapsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center flex-1 h-screen bg-[#0C0950] text-[#FBE4D6]">Loading...</div>}>
+      <Roadmap />
+    </Suspense>
+  );
+}
+
+function Roadmap() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams(); // Client-side hook requiring <Suspense>
@@ -189,9 +197,7 @@ export default function Roadmap() {
   return (
     <div className="flex flex-row h-screen bg-[#0C0950]">
       {sidebar}
-      <Suspense fallback={<div className="flex items-center justify-center flex-1 h-screen bg-[#0C0950] text-[#FBE4D6]">Loading...</div>}>
-        {mainContent}
-      </Suspense>
+      {mainContent}
     </div>
   );
 }
