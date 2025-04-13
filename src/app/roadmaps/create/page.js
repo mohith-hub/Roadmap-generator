@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import TreeRoadmap from "./TreeRoadmap";
 import roadmapData from "./roadmapData";
 
-export const dynamic = "force-dynamic"; // Force dynamic rendering to bypass prerendering issues
+export const dynamic = "force-dynamic"; // Force dynamic rendering to bypass prerendering
 
 export default function CreateRoadmap() {
   const router = useRouter();
