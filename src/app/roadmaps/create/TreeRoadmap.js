@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, Suspense } from "react";
 import ReactFlow, {
   ReactFlowProvider,
   useReactFlow,
@@ -14,62 +14,7 @@ import "reactflow/dist/style.css";
 import dagre from "dagre";
 import { useRouter } from "next/navigation";
 
-const nodeWidth = 220;
-const nodeHeight = 60;
-const childSpacing = 30;
-const childBoxOffset = 250;
-const defaultZoomLevel = 0.8;
-
-const CustomBezierEdge = ({
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  sourcePosition,
-  targetPosition,
-  style,
-  markerEnd,
-}) => {
-  const [edgePath] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
-    targetPosition,
-    curvature: 0.5,
-  });
-
-  return (
-    <path
-      d={edgePath}
-      className="react-flow__edge-path"
-      style={style}
-      markerEnd={markerEnd}
-    />
-  );
-};
-
-const getLayoutedElements = (nodes, edges) => {
-  const g = new dagre.graphlib.Graph();
-  g.setGraph({ rankdir: "TB", nodesep: 50, ranksep: 140 });
-  g.setDefaultEdgeLabel(() => ({}));
-
-  nodes.forEach((node) => g.setNode(node.id, { width: nodeWidth, height: nodeHeight }));
-  edges.forEach((edge) => g.setEdge(edge.source, edge.target));
-
-  dagre.layout(g);
-
-  return {
-    nodes: nodes.map((node) => ({
-      ...node,
-      position: { x: g.node(node.id).x, y: g.node(node.id).y },
-      targetPosition: Position.Top,
-      sourcePosition: Position.Bottom,
-    })),
-    edges,
-  };
-};
+// ... (keep all existing constants and components like CustomBezierEdge, getLayoutedElements, etc.)
 
 const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataChange }) => {
   const reactFlowWrapper = useRef(null);
@@ -475,74 +420,76 @@ const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataCha
   };
 
   return (
-    <div
-      ref={reactFlowWrapper}
-      style={{
-        height: `${roadmapHeight}px`,
-        width: "100%",
-        background: "#0C0950",
-        overflow: "auto",
-        padding: "10px",
-        position: "relative",
-      }}
-      onWheel={(e) => e.stopPropagation()}
-    >
-      <button
-        onClick={handleRecenter}
+    <Suspense fallback={<div>Loading roadmap...</div>}>
+      <div
+        ref={reactFlowWrapper}
         style={{
-          position: "absolute",
-          top: "10px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          padding: "8px 16px",
-          background: "#261FB3",
-          color: "#FBE4D6",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontSize: "14px",
-          zIndex: 1001,
+          height: `${roadmapHeight}px`,
+          width: "100%",
+          background: "#0C0950",
+          overflow: "auto",
+          padding: "10px",
+          position: "relative",
         }}
+        onWheel={(e) => e.stopPropagation()}
       >
-        Recenter
-      </button>
+        <button
+          onClick={handleRecenter}
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            padding: "8px 16px",
+            background: "#261FB3",
+            color: "#FBE4D6",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
+            zIndex: 1001,
+          }}
+        >
+          Recenter
+        </button>
 
-      <button
-        onClick={handleBackToHome}
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          padding: "8px 16px",
-          background: "#261FB3",
-          color: "#FBE4D6",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontSize: "14px",
-          zIndex: 1001,
-        }}
-      >
-        Back to Home
-      </button>
+        <button
+          onClick={handleBackToHome}
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            padding: "8px 16px",
+            background: "#261FB3",
+            color: "#FBE4D6",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
+            zIndex: 1001,
+          }}
+        >
+          Back to Home
+        </button>
 
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        edgeTypes={{ default: CustomBezierEdge }}
-        nodeTypes={{ customNode: CustomNode, childNode: ChildNode }}
-        panOnScroll={true}
-        panOnDrag={true}
-        minZoom={0.4}
-        maxZoom={1.5}
-        defaultViewport={{ zoom: defaultZoomLevel, x: 0, y: 50 }}
-        style={{ background: "#0C0950" }}
-      >
-        <Controls position="top-right" />
-        <Background color="#0C0950" />
-      </ReactFlow>
-      <SideWindow child={selectedChild} userData={userData} onUserDataChange={onUserDataChange} />
-    </div>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          edgeTypes={{ default: CustomBezierEdge }}
+          nodeTypes={{ customNode: CustomNode, childNode: ChildNode }}
+          panOnScroll={true}
+          panOnDrag={true}
+          minZoom={0.4}
+          maxZoom={1.5}
+          defaultViewport={{ zoom: defaultZoomLevel, x: 0, y: 50 }}
+          style={{ background: "#0C0950" }}
+        >
+          <Controls position="top-right" />
+          <Background color="#0C0950" />
+        </ReactFlow>
+        <SideWindow child={selectedChild} userData={userData} onUserDataChange={onUserDataChange} />
+      </div>
+    </Suspense>
   );
 };
 
