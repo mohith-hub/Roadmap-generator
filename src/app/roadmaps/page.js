@@ -59,6 +59,7 @@ function Roadmap() {
 
   const [filteredRepos, setFilteredRepos] = useState(domains[selectedDomain].gitHubLinks);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for hamburger menu
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
@@ -66,9 +67,50 @@ function Roadmap() {
     setFilteredRepos(domains[selectedDomain].gitHubLinks.filter((repo) => repo.name.toLowerCase().includes(query)));
   };
 
-  // Sidebar (static content, no client-side dependency)
-  const sidebar = (
-    <aside className="w-64 bg-[#ffff00] shadow-lg p-4 flex flex-col justify-between border-r border-[#0C0950]">
+  // Hamburger menu for mobile
+  const MobileMenu = () => (
+    <div className="md:hidden">
+      <button
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className="p-4 text-[#161179] focus:outline-none"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+      {isMenuOpen && (
+        <div className="absolute top-16 left-0 w-64 bg-[#ffff00] shadow-lg p-4 z-10">
+          <nav className="space-y-4">
+            <button
+              onClick={() => { router.push("/"); setIsMenuOpen(false); }}
+              className="flex items-center space-x-2 text-[#161179] hover:text-[#726bff] w-full text-left py-2"
+            >
+              <HomeIcon className="w-5 h-5 text-[#161179]" />
+              <span className="text-base">Home</span>
+            </button>
+            <button
+              onClick={() => { router.push("/roadmaps"); setIsMenuOpen(false); }}
+              className="flex items-center space-x-2 text-[#161179] hover:text-[#726bff] w-full text-left py-2"
+            >
+              <Book className="w-5 h-5 text-[#161180]" />
+              <span className="text-base">Roadmaps</span>
+            </button>
+            <button
+              onClick={() => { router.push("/"); setIsMenuOpen(false); }}
+              className="flex items-center space-x-2 text-[#161179] hover:text-[#726bff] w-full text-left py-2"
+            >
+              <ArrowLeft className="w-5 h-5 text-[#161179]" />
+              <span className="text-base">Back</span>
+            </button>
+          </nav>
+        </div>
+      )}
+    </div>
+  );
+
+  // Sidebar for desktop
+  const DesktopSidebar = () => (
+    <aside className="hidden md:flex w-64 bg-[#ffff00] shadow-lg p-4 flex-col justify-between border-r border-[#0C0950]">
       <div>
         <h2 className="text-xl font-bold text-[#161179] mb-4">Dashboard</h2>
         <nav className="space-y-4">
@@ -98,17 +140,17 @@ function Roadmap() {
     </aside>
   );
 
-  // Main content that depends on searchParams-derived state
+  // Main content with responsive grid
   const mainContent = (
-    <main className="flex-1 p-4 md:p-10 bg-[#ffffff]">
+    <main className="flex-1 p-4 md:p-10 bg-[#ffffff] overflow-auto">
       <div className="flex flex-col h-full">
         {/* Title */}
         <div className="p-4">
           <h1 className="text-2xl md:text-4xl font-bold text-[#ffb384] mb-4 capitalize">{selectedDomain} Roadmap</h1>
         </div>
 
-        {/* Sections (three columns) */}
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 h-full">
+        {/* Sections (responsive three-column grid) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 h-full max-h-[calc(100vh-200px)] overflow-y-auto">
           {/* GitHub Repositories */}
           <div className="bg-[#161179] p-4 rounded-lg shadow-md flex flex-col min-h-0">
             <h2 className="text-xl md:text-2xl font-semibold text-[#FBE4D6] flex items-center mb-2">
@@ -125,7 +167,7 @@ function Roadmap() {
               />
               <Search className="absolute left-2 top-2 w-4 h-4 text-[#FBE4D6]" />
             </div>
-            <div className="flex-1 overflow-y-auto space-y-2" style={{ maxHeight: "calc(100vh - 250px)" }}>
+            <div className="flex-1 overflow-y-auto space-y-2">
               {filteredRepos.length > 0 ? (
                 filteredRepos.map((repo) => (
                   <a
@@ -151,7 +193,7 @@ function Roadmap() {
               <Video className="w-5 md:w-6 h-5 md:h-6 mr-2 text-[#FBE4D6]" />
               YouTube Tutorials
             </h2>
-            <ul className="flex-1 overflow-y-auto space-y-2" style={{ maxHeight: "calc(100vh - 250px)" }}>
+            <ul className="flex-1 overflow-y-auto space-y-2">
               {domains[selectedDomain].youtubeLinks.map((video) => (
                 <li key={video.title}>
                   <a
@@ -173,7 +215,7 @@ function Roadmap() {
               <Book className="w-5 md:w-6 h-5 md:h-6 mr-2 text-[#FBE4D6]" />
               Medium Articles
             </h2>
-            <ul className="flex-1 overflow-y-auto space-y-2" style={{ maxHeight: "calc(100vh - 250px)" }}>
+            <ul className="flex-1 overflow-y-auto space-y-2">
               {domains[selectedDomain].mediumLinks.map((article) => (
                 <li key={article.title}>
                   <a
@@ -193,10 +235,11 @@ function Roadmap() {
     </main>
   );
 
-  // Combine static sidebar with dynamic main content inside Suspense
+  // Combine mobile menu and desktop sidebar with dynamic main content
   return (
     <div className="flex flex-row h-screen bg-[#0C0950]">
-      {sidebar}
+      <MobileMenu />
+      <DesktopSidebar />
       {mainContent}
     </div>
   );
