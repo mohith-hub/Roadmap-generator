@@ -18,30 +18,25 @@ const getLayoutedElements = (nodes, edges) => {
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-  dagreGraph.setGraph({ rankdir: "TB", nodesep: 50, edgesep: 50, ranksep: 100 }); // Top-Bottom layout
+  dagreGraph.setGraph({ rankdir: "TB", nodesep: 50, edgesep: 50, ranksep: 100 });
 
-  // Add nodes to dagre graph
   nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: 220, height: 80 }); // Adjust size based on your node styling
+    dagreGraph.setNode(node.id, { width: 220, height: 80 });
   });
 
-  // Add edges to dagre graph
   edges.forEach((edge) => {
     dagreGraph.setEdge(edge.source, edge.target);
   });
 
-  // Calculate layout
   dagre.layout(dagreGraph);
 
-  // Update node positions
   nodes.forEach((node) => {
     const nodeWithPosition = dagreGraph.node(node.id);
     node.targetPosition = Position.Top;
     node.sourcePosition = Position.Bottom;
-    // Shift dagre node position (anchor=center) to top left to match React Flow anchor (top left)
     node.position = {
-      x: nodeWithPosition.x - 110, // Half of width
-      y: nodeWithPosition.y - 40,  // Half of height
+      x: nodeWithPosition.x - 110,
+      y: nodeWithPosition.y - 40,
     };
     return node;
   });
@@ -301,25 +296,27 @@ const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataCha
     return (
       <div
         style={{
-          position: "absolute",
-          top: "50px",
-          right: "20px",
-          width: "300px",
+          position: "fixed",
+          top: "10px",
+          right: "10px",
+          width: "90vw", // Responsive width for mobile
+          maxWidth: "300px", // Limit max width on larger screens
+          maxHeight: "80vh", // Limit height to 80% of viewport height
           background: "#FBE4D6",
           border: "2px solid #261FB3",
           borderRadius: "8px",
-          padding: "20px",
+          padding: "15px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           zIndex: 1000,
           fontFamily: "Arial, sans-serif",
-          overflow: "hidden",
+          overflowY: "auto", // Enable vertical scrolling
           color: "#0C0950",
         }}
       >
-        <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "10px" }}>{child.title}</h3>
-        <p style={{ marginBottom: "15px", color: "#0C0950" }}>{child.explanation}</p>
-        <h4 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "10px" }}>Free Resources:</h4>
-        <p style={{ margin: "0", wordWrap: "break-word" }}>
+        <h3 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "10px" }}>{child.title}</h3>
+        <p style={{ marginBottom: "15px", fontSize: "14px", color: "#0C0950" }}>{child.explanation}</p>
+        <h4 style={{ fontSize: "14px", fontWeight: "bold", marginBottom: "10px" }}>Free Resources:</h4>
+        <p style={{ margin: "0", wordWrap: "break-word", fontSize: "12px" }}>
           Learn more at {resourceLinks}.
         </p>
 
@@ -337,6 +334,7 @@ const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataCha
               borderRadius: "4px",
               background: "#FBE4D6",
               color: "#261FB3",
+              fontSize: "12px",
             }}
           />
           <button
@@ -402,6 +400,7 @@ const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataCha
                       wordBreak: "break-all",
                       display: "inline-block",
                       maxWidth: "100%",
+                      fontSize: "12px",
                     }}
                     onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
                     onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
@@ -426,6 +425,7 @@ const TreeRoadmapComponent = ({ roadmap, selectedDomain, userData, onUserDataCha
             cursor: "pointer",
             fontSize: "12px",
             fontWeight: "bold",
+            width: "100%",
           }}
         >
           Close
