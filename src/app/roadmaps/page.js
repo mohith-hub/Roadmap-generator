@@ -30,7 +30,6 @@ export default function RoadmapsPage() {
 
 function Roadmap() {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams(); // Client-side hook requiring <Suspense>
   const domainParam = searchParams.get("domain")?.replace(/-/g, " ");
 

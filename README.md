@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# 🗺️ AI Roadmap Generator
 
-First, run the development server:
+Generate personalized, domain-specific roadmaps powered by AI. Whether you're diving into Web Development, Cybersecurity, Machine Learning, or more — this app gives you curated, actionable learning paths.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🚀 Features
+
+- 🔍 **Skill Domain Selection** – Choose from domains like:
+  - Web Development
+  - Cybersecurity
+  - Data Science
+  - Machine Learning
+  - IoT
+
+- 🤖 **AI-powered Sources** – Pulls learning content from:
+  - GitHub Repos
+  - Medium Articles
+  - YouTube Playlists
+
+- 🌲 **Tree-style Roadmaps** – Visual, hierarchical structure to guide your learning journey.
+
+---
+
+## 🧠 Tech Stack
+
+- **Framework**: Next.js (App Router)
+- **Frontend**: React, CSS Modules
+- **Languages**: JavaScript
+- **Data Source API Routes**: `/api/github`, `/api/medium`, `/api/youtube`
+
+---
+
+## 📁 Folder Structure
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+src/
+├── app/
+│   ├── api/            # Fetch content from GitHub, Medium, YouTube
+│   ├── domains/        # Domain-specific core topics
+│   ├── roadmaps/       # UI & data for roadmap creation
+│   ├── layout.js       # App layout
+│   └── page.js         # Landing page
+├── public/             # Static assets (favicon, images)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+````
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ⚙️ Getting Started
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+git clone https://github.com/your-username/roadmap-generator.git
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+cd roadmap-generator
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+npm install
 
-## Deploy on Vercel
+npm run dev
+````
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Visit `http://localhost:3000` to start generating roadmaps.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📌 TODOs
+
+* [ ] Add user login and save roadmaps
+* [ ] Support PDF export
+* [ ] Add more domains (e.g. DevOps, Mobile Dev)
+
+---
+
+## 🧑‍💻 Author
+
+**Your Name**
+[Portfolio](https://nextjs-portfolio-psi-lac.vercel.app/)
+---
+
+> Empower your journey. One roadmap at a time.
+
+
